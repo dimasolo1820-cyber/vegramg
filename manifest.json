@@ -3,7 +3,7 @@
   "name": "Vegram",
   "short_name": "Vegram",
   "description": "Твой личный мессенджер",
-  "start_url": "index.html",
+  "start_url": "Vegram.apk",
   "display": "standalone",
   "background_color": "#0e1621",
   "theme_color": "#17212b",
