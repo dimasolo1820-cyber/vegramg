@@ -19,7 +19,9 @@ jobs:
 
     - name: Initialize Bubblewrap
       run: |
-        echo "y" | bubblewrap init --manifest="https://dimasolo1820-cyber.github.io/vegramg/manifest.json" --directory=./android
+        export JAVA_HOME=$JAVA_HOME_17_X64
+        export ANDROID_HOME=$ANDROID_HOME
+        bubblewrap init --manifest="https://dimasolo1820-cyber.github.io/vegramg/manifest.json" --directory=./android
         
     - name: Build APK
       run: |
@@ -31,4 +33,3 @@ jobs:
       with:
         name: Vegram-APK
         path: android/app-release-signed.apk
-      
