@@ -3,85 +3,282 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Vegram</title>
+<!-- Эта строчка нужна, чтобы браузер не ругался на иконку и видел приложение -->
 <link rel="icon" href="icon.png" type="image/png">
-<!-- ЭТА СТРОЧКА НУЖНА ДЛЯ PWABUILDER -->
 <link rel="manifest" href="manifest.json">
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
-  body {
-    min-height: 100vh; display: flex; justify-content: center; align-items: center;
-    background: linear-gradient(-45deg, #0e1621, #17212b, #1d3a57, #0e1621);
-    background-size: 400% 400%; animation: gradientBG 15s ease infinite;
-    color: #fff; padding: 20px; overflow: hidden;
-  }
-  @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-  .circle { position: absolute; border-radius: 50%; filter: blur(80px); z-index: -1; animation: float 6s ease-in-out infinite; }
-  .circle1 { width: 300px; height: 300px; background: rgba(43, 82, 120, 0.6); top: -50px; left: -50px; }
-  .circle2 { width: 250px; height: 250px; background: rgba(77, 205, 94, 0.3); bottom: -50px; right: -50px; animation-delay: 3s; }
-  @keyframes float { 0% { transform: translateY(0px) scale(1); } 50% { transform: translateY(-20px) scale(1.05); } 100% { transform: translateY(0px) scale(1); } }
-  .card {
-    background: rgba(23, 33, 43, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 40px 30px;
-    max-width: 420px; width: 100%; text-align: center; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-    animation: fadeIn 1s ease-out;
-  }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-  .app-icon { width: 100px; height: 100px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); animation: floatIcon 4s ease-in-out infinite; }
-  @keyframes floatIcon { 0% { transform: translateY(0); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0); } }
-  h1 { font-size: 32px; font-weight: 900; margin-bottom: 10px; background: linear-gradient(90deg, #4dcd5e, #2b5278); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px; }
-  .subtitle { font-size: 14px; color: #8a9aa9; margin-bottom: 30px; line-height: 1.5; }
-  .features { text-align: left; margin-bottom: 30px; background: rgba(0, 0, 0, 0.2); padding: 15px 20px; border-radius: 16px; list-style: none; }
-  .features li { margin-bottom: 10px; font-size: 14px; display: flex; align-items: center; gap: 10px; color: #e0e0e0; }
-  .features li:last-child { margin-bottom: 0; }
-  .features li span { font-size: 18px; }
-  .btn { display: flex; justify-content: center; align-items: center; gap: 10px; width: 100%; padding: 18px; color: white; text-decoration: none; border-radius: 16px; font-size: 16px; font-weight: 700; transition: 0.3s; border: none; cursor: pointer; margin-bottom: 15px; }
-  .btn-android { background: linear-gradient(135deg, #2e7d32, #1b5e20); box-shadow: 0 10px 20px rgba(46, 125, 50, 0.4); }
-  .btn-android:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(46, 125, 50, 0.6); }
-  .btn-web { background: linear-gradient(135deg, #2b5278, #1d3a57); box-shadow: 0 10px 20px rgba(43, 82, 120, 0.4); }
-  .btn-web:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(43, 82, 120, 0.6); }
-  .instruction { margin-top: 10px; font-size: 12px; color: #6c7883; line-height: 1.5; }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  html, body { height: 100dvh; width: 100vw; overflow: hidden; background: #0e1621; color: #fff; }
+  
+  /* Экран входа */
+  #loginScreen { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; padding: 20px; background: #17212b; z-index: 999; position: fixed; inset: 0; }
+  #loginScreen h1 { font-size: 36px; color: #2b5278; margin-bottom: 25px; letter-spacing: 1px; }
+  #loginScreen input { width: 100%; max-width: 320px; padding: 16px; border-radius: 12px; border: 1px solid #2b3a4a; background: #242f3d; color: #fff; font-size: 16px; margin-bottom: 15px; outline: none; }
+  #loginScreen button { width: 100%; max-width: 320px; padding: 16px; border-radius: 12px; border: none; background: #2b5278; color: #fff; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+  #loginScreen button:hover { background: #3a6a99; }
+
+  /* Основной интерфейс */
+  .app { display: flex; height: 100%; width: 100%; position: relative; display: none; }
+  .sidebar { width: 100%; height: 100%; display: flex; flex-direction: column; background: #17212b; position: absolute; inset: 0; transition: transform 0.25s ease; z-index: 2; }
+  .app.chat-open .sidebar { transform: translateX(-100%); }
+  
+  .header { padding: 15px; background: #17212b; border-bottom: 1px solid #0e1621; display: flex; align-items: center; justify-content: space-between; }
+  .header .name { font-size: 18px; font-weight: bold; }
+  .logout-btn { background: none; border: none; color: #e74c3c; font-size: 14px; cursor: pointer; }
+  
+  .chat-list { flex: 1; overflow-y: auto; }
+  .chat-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .chat-item:active { background: #202b36; }
+  .avatar { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; background: #2b5278; flex-shrink: 0; position: relative; }
+  .online-dot { position: absolute; bottom: 2px; right: 2px; width: 14px; height: 14px; border-radius: 50%; background: #4dcd5e; border: 2px solid #17212b; }
+  .online-dot.offline { background: #8a9aa9; }
+  .chat-info { flex: 1; min-width: 0; }
+  .chat-info .name { font-size: 16px; font-weight: 600; }
+  .chat-info .status { font-size: 12px; color: #8a9aa9; margin-top: 2px; }
+  
+  /* Экран чата */
+  .chat-area { width: 100%; height: 100%; display: flex; flex-direction: column; background: #0e1621; position: absolute; inset: 0; transform: translateX(100%); transition: transform 0.25s ease; z-index: 3; }
+  .app.chat-open .chat-area { transform: translateX(0); }
+  
+  .chat-header { padding: 10px 14px; background: #17212b; border-bottom: 1px solid #0e1621; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .back-btn { background: transparent; border: none; color: #8a9aa9; font-size: 28px; cursor: pointer; padding: 0 8px; }
+  .chat-header .avatar { width: 40px; height: 40px; font-size: 18px; }
+  .chat-header .title { font-size: 16px; font-weight: 600; }
+  
+  .messages { flex: 1; overflow-y: auto; padding: 16px 12px; display: flex; flex-direction: column; gap: 6px; }
+  .msg { max-width: 80%; padding: 9px 12px; border-radius: 14px; font-size: 15px; word-wrap: break-word; position: relative; }
+  .msg.incoming { background: #182533; align-self: flex-start; border-bottom-left-radius: 4px; }.msg.outgoing { background: #2b5278; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .msg .time { font-size: 10px; color: rgba(255,255,255,0.5); margin-left: 6px; float: right; margin-top: 5px; }
+  
+  /* Поле ввода */
+  .input-area { padding: 10px; background: #17212b; display: flex; gap: 8px; border-top: 1px solid #0e1621; flex-shrink: 0; padding-bottom: max(10px, env(safe-area-inset-bottom)); align-items: center; }
+  .emoji-btn { background: none; border: none; color: #8a9aa9; font-size: 24px; cursor: pointer; padding: 0 5px; }
+  .input-area input { flex: 1; background: #242f3d; border: none; border-radius: 20px; padding: 12px 16px; color: #fff; font-size: 15px; outline: none; }
+  .input-area button.send { width: 44px; height: 44px; border-radius: 50%; background: #2b5278; border: none; color: #fff; font-size: 18px; cursor: pointer; }
+
+  /* Панель эмодзи */
+  .emoji-panel { display: none; position: absolute; bottom: 60px; left: 10px; right: 10px; background: #17212b; border: 1px solid #2b3a4a; border-radius: 12px; padding: 10px; grid-template-columns: repeat(7, 1fr); gap: 5px; z-index: 10; max-height: 200px; overflow-y: auto; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
+  .emoji-panel.show { display: grid; }
+  .emoji-panel span { font-size: 24px; cursor: pointer; text-align: center; padding: 5px; border-radius: 5px; }
+  .emoji-panel span:hover { background: #2b3a4a; }
 </style>
 </head>
 <body>
 
-  <div class="circle circle1"></div>
-  <div class="circle circle2"></div>
+<!-- Экран входа -->
+<div id="loginScreen">
+  <h1>Vegram</h1>
+  <input type="text" id="nameInput" placeholder="Твое имя" maxlength="20">
+  <button onclick="login()">Войти в сеть</button>
+</div>
 
-  <div class="card">
-    <img src="icon.png" alt="Vegram" class="app-icon">
-    
-    <h1>Vegram</h1>
-    <p class="subtitle">Твой личный мессенджер. Быстрый, безопасный и без лишнего шума.</p><ul class="features">
-      <li><span>⚡</span> Мгновенная доставка сообщений</li>
-      <li><span>🔒</span> Личные чаты с контактами</li>
-      <li><span>📱</span> Работает как приложение</li>
-    </ul>
-    
-    <!-- Кнопка скачивания APK -->
-    <a href="Vegram.apk" class="btn btn-android" download>
-      🤖 Скачать для Android (APK)
-    </a>
-    
-    <!-- Кнопка веб-версии -->
-    <a href="vegram.html" class="btn btn-web">
-      🌐 Открыть в браузере (Web)
-    </a>
-    
-    <div class="instruction">
-      Для Android скачивай APK.<br>
-      Для ПК или iOS используй веб-версию.
+<!-- Основной интерфейс -->
+<div class="app" id="app">
+  <div class="sidebar">
+    <div class="header">
+      <div>
+        <div class="name" id="myNameDisplay">Имя</div>
+      </div>
+      <button class="logout-btn" onclick="location.reload()">Выйти</button>
     </div>
+    <div class="chat-list" id="chatList"></div>
   </div>
 
-  <!-- РЕГИСТРАЦИЯ SERVICE WORKER (чтобы PWABuilder был доволен) -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(err => console.log('SW Error:', err));
-    }
-  </script>
+  <div class="chat-area">
+    <div class="chat-header">
+      <button class="back-btn" onclick="closeChat()">‹</button>
+      <div class="avatar" id="headerAvatar">👤</div>
+      <div class="title" id="headerTitle">Имя</div>
+    </div>
+    <div class="messages" id="messages"></div>
+    
+    <div class="input-area">
+      <button class="emoji-btn" onclick="toggleEmoji()">😊</button>
+      <input type="text" id="msgInput" placeholder="Сообщение..." onkeydown="if(event.key==='Enter') sendMessage()">
+      <button class="send" onclick="sendMessage()">➤</button>
+    </div>
+    
+    <!-- Панель эмодзи -->
+    <div class="emoji-panel" id="emojiPanel"></div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, set, onValue, push, query, orderByChild, onDisconnect } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  // Регистрация Service Worker для PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+  }
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAjYs3IKjGw-FgVqP0K3DU4dgSKJU6pCc",
+    authDomain: "vegram-ce8b1.firebaseapp.com",
+    databaseURL: "https://vegram-ce8b1-default-rtdb.firebaseio.com",
+    projectId: "vegram-ce8b1",
+    storageBucket: "vegram-ce8b1.firebasestorage.app",
+    messagingSenderId: "588021496755",
+    appId: "1:588021496755:web:3f6d3922f5f646e668edc6"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  let myName = "";
+  let myUid = ""; 
+  let activeChatUid = null;
+  let messagesUnsubscribe = null;
+  let lastMsgCount = 0;
+
+  // Звук уведомления
+  function playSound() {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(800, audioCtx.currentTime);osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.3);
+    } catch (e) {}
+  }
+
+  window.login = () => {
+    myName = document.getElementById('nameInput').value.trim();
+    if (!myName) return alert("Введите имя!");
+    
+    // Защита от дублей ID
+    myUid = localStorage.getItem('veg_uid') || (myName + "_" + Math.random().toString(36).substr(2, 5));
+    localStorage.setItem('veg_uid', myUid);
+
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    document.getElementById('myNameDisplay').textContent = myName;
+
+    // Статус онлайн
+    const userRef = ref(db, `users/${myUid}`);
+    set(userRef, { name: myName, online: true });
+    onDisconnect(userRef).set({ name: myName, online: false });
+    
+    loadContacts();
+  };
+
+  window.closeChat = () => {
+    document.getElementById('app').classList.remove('chat-open');
+    activeChatUid = null;
+    document.getElementById('emojiPanel').classList.remove('show');
+    if (messagesUnsubscribe) messagesUnsubscribe();
+  };
+
+  window.sendMessage = () => {
+    const input = document.getElementById('msgInput');
+    const text = input.value.trim();
+    if (!text || !activeChatUid) return;
+
+    input.value = '';
+    const chatId = [myUid, activeChatUid].sort().join('_');
+    
+    push(ref(db, `messages/${chatId}`), {
+      sender: myUid,
+      text: text,
+      time: Date.now()
+    });
+  };
+
+  function loadContacts() {
+    onValue(ref(db, 'users'), (snapshot) => {
+      const list = document.getElementById('chatList');
+      list.innerHTML = '';
+      const users = snapshot.val();
+      if (!users) return;
+
+      for (const uid in users) {
+        if (uid === myUid) continue; 
+        
+        const u = users[uid];
+        const div = document.createElement('div');
+        div.className = 'chat-item';
+        
+        const dotClass = u.online ? 'online-dot' : 'online-dot offline';
+        const statusText = u.online ? 'В сети' : 'Не в сети';
+        const statusColor = u.online ? '#4dcd5e' : '#8a9aa9';
+
+        div.innerHTML = `
+          <div class="avatar">👤<div class="${dotClass}"></div></div>
+          <div class="chat-info">
+            <div class="name">${u.name}</div>
+            <div class="status" style="color:${statusColor}">${statusText}</div>
+          </div>
+        `;
+        div.onclick = () => openChat(uid, u.name);
+        list.appendChild(div);
+      }
+    });
+  }
+
+  function openChat(uid, name) {
+    activeChatUid = uid;
+    lastMsgCount = 0;
+    document.getElementById('app').classList.add('chat-open');
+    document.getElementById('headerTitle').textContent = name;
+
+    const chatId = [myUid, activeChatUid].sort().join('_');
+    const q = query(ref(db, `messages/${chatId}`), orderByChild('time'));
+
+    if (messagesUnsubscribe) messagesUnsubscribe();
+    
+    messagesUnsubscribe = onValue(q, (snapshot) => {
+      const msgsEl = document.getElementById('messages');
+      msgsEl.innerHTML = '';
+      const data = snapshot.val();
+      
+      if (!data) {
+        msgsEl.innerHTML = '<div style="text-align:center; font-size:12px; color:#666;">Сообщений нет...</div>';
+        return;
+      }
+
+      const msgsArray = Object.values(data);
+
+      if (msgsArray.length > lastMsgCount && lastMsgCount !== 0) {
+        const lastMsg = msgsArray[msgsArray.length - 1];
+        if (lastMsg.sender !== myUid) playSound();
+      }
+      lastMsgCount = msgsArray.length;
+
+      msgsArray.forEach(m => {
+        const isMine = m.sender === myUid;
+        const div = document.createElement('div');
+        div.className = `msg ${isMine ? 'outgoing' : 'incoming'}`;const time = m.time ? new Date(m.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
+        div.innerHTML = `${m.text} <span class="time">${time}</span>`;
+        msgsEl.appendChild(div);
+      });
+      msgsEl.scrollTop = msgsEl.scrollHeight;
+    });
+  }
+
+  // --- ЭМОДЗИ ---
+  const emojis = ['😀','😃','😄','😁','😆','😅','😂','🤣','😊','😇','🙂','🙃','😉','😌','😍','🥰','😘','😗','😙','😚','😋','😛','😝','😜','🤪','🤨','🧐','🤓','😎','🥳','😏','😒','😞','😔','😟','😕','🙁','☹️','😣','😖','😫','😩','🥺','😢','😭','😤','😠','😡','🤬','🤯','😳','🥵','🥶','😱','😨','😰','😥','😓','🤗','🤔','🤭','🤫','🤥','😶','😐','😑','😬','🙄','😯','😦','😧','😮','😲','🥱','😴','🤤','😪','😵','🤐','🥴','🤢','🤮','🤧','😷','🤒','🤕','🤑','🤠','😈','👿','👹','👺','🤡','💩','👻','💀','☠️','👽','👾','🤖','🎃','😺','😸','😹','😻','😼','😽','🙀','😿','😾','❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💔','❣️','💕','💞','💓','💗','💖','💘','💝','👍','👎','👌','✌️','🤞','🤟','🤘','🤙','👈','👉','👆','👇','☝️','👋','🤚','🖐️','✋','🖖','👏','🙌','🤝','🙏','💪','🎉','🎊','🔥','⭐','✨','💯','✅','❌','❓','❗','💬','💭'];
+  const panel = document.getElementById('emojiPanel');
+  panel.innerHTML = emojis.map(e => `<span onclick="addEmoji('${e}')">${e}</span>`).join('');
+
+  window.toggleEmoji = () => {
+    panel.classList.toggle('show');
+  };
+
+  window.addEmoji = (emoji) => {
+    const input = document.getElementById('msgInput');
+    input.value += emoji;
+    input.focus();
+  };
+</script>
+
 </body>
 </html>
