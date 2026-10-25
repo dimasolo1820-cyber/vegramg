@@ -1,9 +1,6 @@
 name: Build APK
 
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+on: workflow_dispatch
 
 jobs:
   build:
@@ -22,7 +19,7 @@ jobs:
 
     - name: Initialize Bubblewrap
       run: |
-        bubblewrap init --manifest="https://dimasolo1820-cyber.github.io/vegramg/manifest.json" --directory=./android
+        echo "y" | bubblewrap init --manifest="https://dimasolo1820-cyber.github.io/vegramg/manifest.json" --directory=./android
         
     - name: Build APK
       run: |
@@ -34,3 +31,4 @@ jobs:
       with:
         name: Vegram-APK
         path: android/app-release-signed.apk
+      
