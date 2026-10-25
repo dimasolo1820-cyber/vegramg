@@ -1,7 +1,7 @@
 self.addEventListener('install', (e) => {
+  self.skipWaiting(); // Активируем сразу
   e.waitUntil(
-    caches.open('vegram-store-v10').then((cache) => {
-      // Пытаемся сохранить только главную страницу, чтобы не было ошибки
+    caches.open('vegram-store-v20').then((cache) => {
       return cache.add('/index.html').catch(err => console.log('Cache error:', err));
     })
   );
